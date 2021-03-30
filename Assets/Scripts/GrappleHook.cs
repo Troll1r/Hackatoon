@@ -35,21 +35,21 @@ public class GrappleHook : MonoBehaviour
                     target = other.transform;
                     CreateHook();
                 }
+                
             }
-        }
-        else
-        {
-            DisableHook();
-            target = null;
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("PointHook"))
+        if (other.CompareTag("Anchor"))
         {
-            DisableHook();
-            target = null;
+            if (Input.GetKeyUp(KeyCode.Space))
+            {
+                DisableHook();
+                target = null;
+            }
+                
         }
     }
 
@@ -69,19 +69,12 @@ public class GrappleHook : MonoBehaviour
 
                     anchor = new Vector3(target.transform.position.x, target.transform.position.y, target.transform.position.z);
                     
-                    /*springJoint.autoConfigureConnectedAnchor = false;
-                    springJoint.connectedAnchor = Vector3.zero;*/
+                    springJoint.autoConfigureConnectedAnchor = false;
+                    springJoint.connectedAnchor = anchor;   
 
-                    springJoint.anchor = anchor;
+                    springJoint.anchor = new Vector3(0, 3, 0);
 
                     springJoint.axis = new Vector3(0, 0, 1);
-
-                    springJoint.useLimits = true;
-                    JointLimits limits = springJoint.limits;
-                    limits.max = 45;
-                    limits.min = -45;
-                    limits.bounciness = 1;
-                    springJoint.limits = limits;
 
                     isDrawing = true;
                 }

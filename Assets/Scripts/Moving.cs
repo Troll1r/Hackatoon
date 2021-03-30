@@ -15,15 +15,30 @@ public class Moving : MonoBehaviour
     Transform end;
     private bool check = true;
     public Animator anim;
+    public Animator anim2;
+    bool isJump;
     [SerializeField] private GrappleHook grappleHook;
     // public Hook hook;
     //Transform player;
 
     void Start()
     {
+        isJump = true;
+        anim2 = gameObject.GetComponent<Animator>();
      //   player.position = transform.position;
         isAlive = true;
         rb = GetComponent<Rigidbody>();
+    }
+
+    IEnumerator FrogJump()
+    {
+        yield return new WaitForSeconds(0.65f);
+        {
+            rb.AddForce(Vector3.up * jumpForce);
+            rb.AddForce(Vector3.right * forwardForce);
+            isDouble = true;
+            isJump = true;
+        }
     }
 
     void Update()
@@ -56,13 +71,15 @@ public class Moving : MonoBehaviour
             {
                 if (rh.transform.CompareTag("Floor"))
                 {
+                    transform.rotation = Quaternion.Euler(0, 0, 0);
+                    anim2.Play("Frog"); 
                     IsGrounded = true;
                     isDouble = false;
-                    if (IsGrounded)
+                    if (IsGrounded && isJump)
                     {
-                        rb.AddForce(Vector3.up * jumpForce);
-                        rb.AddForce(Vector3.right * forwardForce);
-                        isDouble = true;
+                        isJump = false;
+                        anim2.Play("Frog");
+                        StartCoroutine(FrogJump());
                     }
                     check = true;
                 }
@@ -76,6 +93,7 @@ public class Moving : MonoBehaviour
         {
             isDouble = false;
             isAvailable = false;
+
             //  Vector3 playerPos = new Vector3(player.position.x, player.position.y, player.position.z);
             //VEctro
             // hook.HookCreate(playerPos, end.position);
