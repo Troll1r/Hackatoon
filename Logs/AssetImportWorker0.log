@@ -1939,3 +1939,4 @@ Received Import Request.
 Start importing Assets/Materials/SandCsstle.mat using Guid(cdb4519f6cc60a94bb508ed3a4fd153d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ea6bad2eb70d28adcac372fd9bd5470d') in 0.020595 seconds
   Import took 0.022857 seconds .
 
+AssetImportWorkerClient::OnTransportError - code=2 error=End of file
