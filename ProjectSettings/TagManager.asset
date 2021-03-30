@@ -12,6 +12,7 @@ TagManager:
   - Ball
   - ground
   - Anchor
+  - DeadZone
   layers:
   - Default
   - TransparentFX

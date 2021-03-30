@@ -16,6 +16,7 @@ public class Moving : MonoBehaviour
     private bool check = true;
     public Animator anim;
     public Animator anim2;
+    public HealthBar timel;
     bool isJump;
     [SerializeField] private GrappleHook grappleHook;
     // public Hook hook;
@@ -43,6 +44,17 @@ public class Moving : MonoBehaviour
 
     void Update()
     {
+        Ray ray = new Ray(gameObject.transform.position, Vector3.down);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, 1.5f))
+        {
+            if (hit.transform.CompareTag("Ball") && check)
+            {
+                anim.Play("Jump");
+                JumpBall();
+                check = false;
+            }
+        }
         if (isAlive)
         {
             if (Input.GetKeyDown(KeyCode.Space))
@@ -59,7 +71,9 @@ public class Moving : MonoBehaviour
         {
             isAlive = false;
         }
-        
+        if (other.gameObject.tag == "DeadZone")
+            Die();
+
     }
     public void Jump() 
     {
@@ -101,7 +115,12 @@ public class Moving : MonoBehaviour
     }
     void JumpBall()
     {
-        rb.AddForce(Vector3.up * 950);
+        rb.AddForce(Vector3.up * 800);
         rb.AddForce(Vector3.right * 160);
+    }
+    public void Die()
+    {
+        timel.timeLeft = 0;
+
     }
 }
