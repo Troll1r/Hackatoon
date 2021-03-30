@@ -5,65 +5,87 @@ using UnityEngine;
 public class GrappleHook : MonoBehaviour
 {
     [SerializeField] private HookRenderer hookRenderer;
-    [SerializeField] private SpringJoint springJoint;
+    private HingeJoint springJoint;
     [SerializeField] private LineRenderer lineRenderer;
+    [SerializeField] private Moving moving;
     private Transform target = null;
-
+    bool isDrawing = false;
+    Vector3 anchor;
+    public bool isHook = true;
+    bool isMoving;
+    bool isHinge = true;
+    Rigidbody rb;
     private void Update()
     {
-        if(target != null)
+        //isHook = moving.GetComponent<Moving>().isHookAble;
+        if (isDrawing)
         {
-            
+            hookRenderer.DrawHook(transform.position, anchor);
         }
     }
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("PointHook") && Input.GetKeyDown(KeyCode.Space))
+        if (other.CompareTag("Anchor"))
         {
-            CreateHook();
+            if (isHook)
+            {
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    rb = other.GetComponent<Rigidbody>();
+                    target = other.transform;
+                    CreateHook();
+                }
+            }
         }
         else
         {
             DisableHook();
             target = null;
-        }  
-        /*while (other.CompareTag("PointHook") && Input.GetKeyDown(KeyCode.Space))
-        {
-            target = other.transform;
-
-            hookRenderer.DrawHook(transform.position, target.position);
-
-        }*/
+        }
     }
-  /* private void OnTriggerExit(Collider other)
+
+    private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("PointHook"))
         {
             DisableHook();
             target = null;
         }
-    }*/
+    }
 
     public void CreateHook()
     {
-        if (target != null)
+        
+        if(target != null)
         {
-            Debug.Log("Да");
+            if (target.transform.CompareTag("Anchor"))
+            {
+                if (isHinge)
+                {
+                    
+                    isHinge = false;
 
-            Vector3 anchor = new Vector3(target.position.x, target.position.y, target.position.z);
+                    springJoint = gameObject.AddComponent<HingeJoint>();
 
-            springJoint = gameObject.AddComponent<SpringJoint>();
-            springJoint.autoConfigureConnectedAnchor = false;
-            springJoint.anchor = anchor;
+                    anchor = new Vector3(target.transform.position.x, target.transform.position.y, target.transform.position.z);
+                    
+                    /*springJoint.autoConfigureConnectedAnchor = false;
+                    springJoint.connectedAnchor = Vector3.zero;*/
 
-            /*float grappleDistance = Vector3.Distance(transform.position, anchor);
+                    springJoint.anchor = anchor;
 
-            springJoint.maxDistance = grappleDistance;
-            springJoint.minDistance = grappleDistance;*/
+                    springJoint.axis = new Vector3(0, 0, 1);
 
-            springJoint.damper = 10;
-            springJoint.spring = 5;
+                    springJoint.useLimits = true;
+                    JointLimits limits = springJoint.limits;
+                    limits.max = 45;
+                    limits.min = -45;
+                    limits.bounciness = 1;
+                    springJoint.limits = limits;
 
+                    isDrawing = true;
+                }
+            }
         }
     }
 
@@ -71,5 +93,7 @@ public class GrappleHook : MonoBehaviour
     {
         Destroy(springJoint);
         hookRenderer.Disable();
+        isDrawing = false;
+        isHinge = true;
     }
 }

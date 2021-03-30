@@ -33,8 +33,6 @@ public class HealthBar : MonoBehaviour
             bar.SetActive(true);
             start.SetActive(false);
             strt = true;
-
-
         }
         if (strt == true)
         {
@@ -53,17 +51,9 @@ public class HealthBar : MonoBehaviour
         bar.SetActive(false);
         contune.SetActive(true);
         player.SetActive(false);
-        
-
-
-
     }
     public void LoadeScene(int value)
     {
         SceneManager.LoadScene(value);
-    
-    
-
     }
-
 }

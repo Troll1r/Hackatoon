@@ -7,6 +7,11 @@ TagManager:
   - Floor
   - Zacep
   - PointHook
+  - Fire
+  - Frog
+  - Ball
+  - ground
+  - Anchor
   layers:
   - Default
   - TransparentFX

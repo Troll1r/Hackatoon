@@ -11,20 +11,19 @@ public class Moving : MonoBehaviour
     private Rigidbody rb;
     bool isAlive;
     bool isDouble;
+    bool isAvailable;
     Transform end;
-    public Transform camera;
-    Vector3 posEnd, posSmooth;
-    public HealthBar timel;
-    bool check;
+    private bool check = true;
     public Animator anim;
-
+    [SerializeField] private GrappleHook grappleHook;
+    // public Hook hook;
+    //Transform player;
 
     void Start()
     {
+     //   player.position = transform.position;
         isAlive = true;
         rb = GetComponent<Rigidbody>();
-
-
     }
 
     void Update()
@@ -32,56 +31,28 @@ public class Moving : MonoBehaviour
         if (isAlive)
         {
             if (Input.GetKeyDown(KeyCode.Space))
-            {
+                grappleHook.CreateHook();
+            else if (Input.GetKeyUp(KeyCode.Space))
+                grappleHook.DisableHook();
+            if (Input.GetKeyDown(KeyCode.Space))
                 Jump();
-            }
         }
-        Ray ray = new Ray(gameObject.transform.position, Vector3.down);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 0.5f))
-        {
-            if (hit.transform.CompareTag("Ball") && check)
-            {
-                anim.Play("Jump");
-                Debug.Log("Ìÿ÷");
-                JumpBall();
-                check = false;
-            }
-        }
-
     }
-
-    void LateUpdate()
-    {
-
-    }
-
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Floor")
-            Die();
-
-    }
-    public void Die()
-    {
-        timel.timeLeft = 0;
-
-    }
-
-    void OnTriggerStay(Collider other)
-    {
-        if (other.CompareTag("Zacep"))
+        if (other.gameObject.tag == "ground")
         {
-            other.transform.position = end.position;
+            isAlive = false;
         }
+        
     }
-    public void Jump()
+    public void Jump() 
     {
         Ray ray = new Ray(gameObject.transform.position, Vector3.down);
         RaycastHit rh;
-        if (Physics.Raycast(ray, out rh, 1.5f))
+        if (Physics.Raycast(ray, out rh, 2f))
         {
-            if (rh.transform != null)
+            if(rh.transform != null)
             {
                 if (rh.transform.CompareTag("Floor"))
                 {
@@ -93,9 +64,21 @@ public class Moving : MonoBehaviour
                         rb.AddForce(Vector3.right * forwardForce);
                         isDouble = true;
                     }
+                    check = true;
                 }
-
+                    
             }
+        }
+        
+        else { IsGrounded = false; }
+       
+        if (Input.GetKeyDown(KeyCode.Space) && isDouble == true)
+        {
+            isDouble = false;
+            isAvailable = false;
+            //  Vector3 playerPos = new Vector3(player.position.x, player.position.y, player.position.z);
+            //VEctro
+            // hook.HookCreate(playerPos, end.position);
         }
     }
     void JumpBall()
