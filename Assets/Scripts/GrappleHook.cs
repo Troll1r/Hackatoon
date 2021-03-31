@@ -64,12 +64,11 @@ public class GrappleHook : MonoBehaviour
             {
                 if (isHinge)
                 {
-
                     transform.rotation = Quaternion.Euler(0, 0, 0);
-
 
                     rb = gameObject.GetComponent<Rigidbody>();
                     rb.AddForce(Vector3.up * 500);
+                    rb.AddForce(Vector3.right * 160);
 
                     isHinge = false;
 

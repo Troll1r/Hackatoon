@@ -21,24 +21,32 @@ public class Moving : MonoBehaviour
     bool bool1 = true;
     int i = 0;
     [SerializeField] private GrappleHook grappleHook;
-    // public Hook hook;
-    //Transform player;
+    private AudioSource audioS;
+    public AudioSource audioSource;
 
     void Start()
     {
+        audioS = GetComponent<AudioSource>();
         isJump = true;
         anim2 = gameObject.GetComponent<Animator>();
-     //   player.position = transform.position;
         isAlive = true;
         rb = GetComponent<Rigidbody>();
     }
 
     IEnumerator FrogJump()
     {
-        Debug.Log("”Û");
-        yield return new WaitForSeconds(0.65f);
-        rb.AddForce(Vector3.up * jumpForce);
-        rb.AddForce(Vector3.right * forwardForce);
+        if (bool1)
+        {
+            bool1 = false;
+
+            yield return new WaitForSeconds(0.65f);
+            rb.AddForce(Vector3.up * jumpForce);
+            rb.AddForce(Vector3.right * forwardForce);
+            bool1 = true;
+        }
+        else
+            yield return new WaitForSeconds(0);
+
     }
 
     void Update()
@@ -60,9 +68,8 @@ public class Moving : MonoBehaviour
                 grappleHook.CreateHook();
             else if (Input.GetKeyUp(KeyCode.Space))
                 grappleHook.DisableHook();
-            if (Input.GetKeyDown(KeyCode.Space) && i == 0)
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                i++;
                 Jump();
             }
         }
@@ -75,7 +82,15 @@ public class Moving : MonoBehaviour
         }
         if (other.gameObject.tag == "DeadZone")
             Die();
-
+        if (other.gameObject.tag == "Floor")
+            IsGrounded = true;
+        
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "Floor")
+            IsGrounded = false;
+        
     }
     public void Jump() 
     {
@@ -83,7 +98,13 @@ public class Moving : MonoBehaviour
         RaycastHit rh;
         if (Physics.Raycast(ray, out rh, 0.5f))
         {
-            if(rh.transform != null)
+            if (IsGrounded)
+            {
+                anim2.Play("Frog");
+                audioS.Play();
+                StartCoroutine(FrogJump());
+            }
+            if (rh.transform != null)
             {
                 if (rh.transform.CompareTag("Floor"))
                 {
@@ -91,9 +112,7 @@ public class Moving : MonoBehaviour
                     IsGrounded = true;
                     isDouble = false;
                     bool1 = true;
-                    i--;
-                    anim2.Play("Frog");
-                    StartCoroutine(FrogJump());
+                    
                     check = true;
                 }
             }
@@ -103,6 +122,7 @@ public class Moving : MonoBehaviour
     }
     void JumpBall()
     {
+        audioSource.Play();
         rb.AddForce(Vector3.up * 400);
         rb.AddForce(Vector3.right * 160);
     }
