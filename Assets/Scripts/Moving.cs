@@ -18,6 +18,8 @@ public class Moving : MonoBehaviour
     public Animator anim2;
     public HealthBar timel;
     bool isJump;
+    bool bool1 = true;
+    int i = 0;
     [SerializeField] private GrappleHook grappleHook;
     // public Hook hook;
     //Transform player;
@@ -33,13 +35,10 @@ public class Moving : MonoBehaviour
 
     IEnumerator FrogJump()
     {
+        Debug.Log("”Û");
         yield return new WaitForSeconds(0.65f);
-        {
-            rb.AddForce(Vector3.up * jumpForce);
-            rb.AddForce(Vector3.right * forwardForce);
-            isDouble = true;
-            isJump = true;
-        }
+        rb.AddForce(Vector3.up * jumpForce);
+        rb.AddForce(Vector3.right * forwardForce);
     }
 
     void Update()
@@ -61,8 +60,11 @@ public class Moving : MonoBehaviour
                 grappleHook.CreateHook();
             else if (Input.GetKeyUp(KeyCode.Space))
                 grappleHook.DisableHook();
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space) && i == 0)
+            {
+                i++;
                 Jump();
+            }
         }
     }
     private void OnTriggerEnter(Collider other)
@@ -79,43 +81,29 @@ public class Moving : MonoBehaviour
     {
         Ray ray = new Ray(gameObject.transform.position, Vector3.down);
         RaycastHit rh;
-        if (Physics.Raycast(ray, out rh, 2f))
+        if (Physics.Raycast(ray, out rh, 0.5f))
         {
             if(rh.transform != null)
             {
                 if (rh.transform.CompareTag("Floor"))
                 {
-                    transform.rotation = Quaternion.Euler(0, 0, 0);
-                    anim2.Play("Frog"); 
+                    
                     IsGrounded = true;
                     isDouble = false;
-                    if (IsGrounded && isJump)
-                    {
-                        isJump = false;
-                        anim2.Play("Frog");
-                        StartCoroutine(FrogJump());
-                    }
+                    bool1 = true;
+                    i--;
+                    anim2.Play("Frog");
+                    StartCoroutine(FrogJump());
                     check = true;
                 }
-                    
             }
         }
         
         else { IsGrounded = false; }
-       
-        if (Input.GetKeyDown(KeyCode.Space) && isDouble == true)
-        {
-            isDouble = false;
-            isAvailable = false;
-
-            //  Vector3 playerPos = new Vector3(player.position.x, player.position.y, player.position.z);
-            //VEctro
-            // hook.HookCreate(playerPos, end.position);
-        }
     }
     void JumpBall()
     {
-        rb.AddForce(Vector3.up * 800);
+        rb.AddForce(Vector3.up * 400);
         rb.AddForce(Vector3.right * 160);
     }
     public void Die()

@@ -15,6 +15,10 @@ public class GrappleHook : MonoBehaviour
     bool isMoving;
     bool isHinge = true;
     Rigidbody rb;
+
+    private void Start()
+    {
+    }
     private void Update()
     {
         //isHook = moving.GetComponent<Moving>().isHookAble;
@@ -35,7 +39,6 @@ public class GrappleHook : MonoBehaviour
                     target = other.transform;
                     CreateHook();
                 }
-                
             }
         }
     }
@@ -55,14 +58,19 @@ public class GrappleHook : MonoBehaviour
 
     public void CreateHook()
     {
-        
         if(target != null)
         {
             if (target.transform.CompareTag("Anchor"))
             {
                 if (isHinge)
                 {
-                    
+
+                    transform.rotation = Quaternion.Euler(0, 0, 0);
+
+
+                    rb = gameObject.GetComponent<Rigidbody>();
+                    rb.AddForce(Vector3.up * 500);
+
                     isHinge = false;
 
                     springJoint = gameObject.AddComponent<HingeJoint>();
@@ -88,5 +96,6 @@ public class GrappleHook : MonoBehaviour
         hookRenderer.Disable();
         isDrawing = false;
         isHinge = true;
+        target = null;
     }
 }
